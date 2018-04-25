@@ -14,10 +14,14 @@ import { isClosure, isCompoundSExp, isEmptySExp, isSymbolSExp, isSExp,
 
 export const rewriteLetStar = (cexp: Parsed | Error) : LetExp  | Error => 
 {
-    // Implement me!
+    const helper = (bindings: Binding[],internalBody: CExp[]):LetExp  | Error=>{
+        return <LetExp>{bindings:[first(bindings)],body:(bindings.length==0)? internalBody:helper(rest(bindings),internalBody) }
+    }
+    return isLetStarExp(cexp)?helper(cexp.bindings,cexp.body): Error(`Bad procedure ${JSON.stringify(cexp)}`);
+    
 }
-
-export const rewriteAllLetStar = (cexp: Parsed | Binding | Error) : Parsed | Binding | Error =>
-{
-	// Implement me!
-}
+console.log(JSON.stringify(parseL3("(let* ((x 3) (y x)) x y)"), null, 4));
+// export const rewriteAllLetStar = (cexp: Parsed | Binding | Error) : Parsed | Binding | Error =>
+// {
+// 	// Implement me!
+// }

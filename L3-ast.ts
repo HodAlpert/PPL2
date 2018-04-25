@@ -9,7 +9,7 @@ import { makeCompoundSExp, makeEmptySExp, makeSymbolSExp, SExp } from './value'
 ;; Scheme Parser
 ;;
 ;; L2 extends L1 with support for IfExp and ProcExp
-;; L3 extends L2 with support for:
+;; L3 extends L2 with support for:q
 ;; - Pair and List datatypes
 ;; - Compound literal expressions denoted with quote
 ;; - Primitives: cons, car, cdr, list?
@@ -26,6 +26,7 @@ import { makeCompoundSExp, makeEmptySExp, makeSymbolSExp, SExp } from './value'
 ;;         |  ( lambda ( <var>* ) <cexp>+ ) / ProcExp(params:VarDecl[], body:CExp[]))
 ;;         |  ( if <cexp> <cexp> <cexp> )   / IfExp(test: CExp, then: CExp, alt: CExp)
 ;;         |  ( let ( binding* ) <cexp>+ )  / LetExp(bindings:Binding[], body:CExp[]))
+;;Q5       |  ( let* (binding*) <cexp>+ )   / LetstarExp(bindings:Binding[], body:CExp[]))
 ;;         |  ( quote <sexp> )              / LitExp(val:SExp)
 ;;         |  ( <cexp> <cexp>* )            / AppExp(operator:CExp, operands:CExp[]))
 ;; <binding>  ::= ( <var> <cexp> )           / Binding(var:VarDecl, val:Cexp)
@@ -61,6 +62,8 @@ export interface IfExp {tag: "IfExp"; test: CExp; then: CExp; alt: CExp; };
 export interface ProcExp {tag: "ProcExp"; args: VarDecl[], body: CExp[]; };
 export interface Binding {tag: "Binding"; var: VarDecl; val: CExp; };
 export interface LetExp {tag: "LetExp"; bindings: Binding[]; body: CExp[]; };
+export interface LetStarExp {tag: "LetStarExp"; bindings: Binding[]; body: CExp[]; };
+
 // L3
 export interface LitExp {tag: "LitExp"; val: SExp; };
 
@@ -297,3 +300,5 @@ export const parseSExp = (x: any): SExp | Error =>
     x.length === 0 ? makeEmptySExp() :
     isArray(x) ? makeCompoundSExp(map(parseSExp, x)) :
     Error(`Bad literal expression: ${x}`);
+
+    
